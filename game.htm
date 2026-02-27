@@ -3,213 +3,203 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hercules: 12 Tasks</title>
+    <title>Hercules: The Twelve Tasks</title>
     <style>
-        /* GLOBAL STYLES */
-        body {
-            background-color: #111;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+        /* CSS RESET */
+        * { box-sizing: border-box; }
+        body { 
+            background-color: #000; 
+            margin: 0; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
             font-family: 'Courier New', monospace;
             overflow: hidden;
         }
 
-        #game-viewport {
+        /* THE SCREEN */
+        #game-screen {
             position: relative;
             width: 800px;
             height: 400px;
-            background: linear-gradient(#000044, #000088);
-            border: 6px solid #fff;
+            background-color: #0000aa; /* Brighter NES Blue */
+            border: 10px solid #fff;
             image-rendering: pixelated;
         }
 
-        /* THE SCROLL (INTRO) */
-        #overlay {
+        /* THE SCROLL OVERLAY */
+        #intro-layer {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.85);
             display: flex; justify-content: center; align-items: center;
-            z-index: 100;
+            z-index: 999;
         }
 
-        #scroll-ui {
+        #scroll {
             background: #e3c58d;
-            width: 70%;
-            padding: 30px;
-            border: 5px solid #5d2e0a;
-            box-shadow: 8px 8px 0px #000;
+            width: 80%;
+            padding: 25px;
+            border: 6px solid #5d2e0a;
+            box-shadow: 10px 10px 0px #000;
             text-align: center;
         }
 
-        #intro-text { color: #331a00; font-size: 18px; font-weight: bold; min-height: 80px; }
+        #intro-text { color: #331a00; font-size: 18px; font-weight: bold; line-height: 1.5; }
 
-        #start-btn {
-            background: #cc0000; color: #fff; border: 4px solid #000;
-            padding: 10px 25px; font-size: 20px; cursor: pointer;
-            font-family: inherit; font-weight: bold; margin-top: 20px;
-            display: none;
+        #start-button {
+            background: #f00; color: #fff; border: 4px solid #000;
+            padding: 12px 24px; font-size: 22px; cursor: pointer;
+            font-family: inherit; font-weight: bold; margin-top: 15px;
+            display: none; /* Shows after typing */
         }
 
-        /* HERCULES PIXEL ART (Built with CSS) */
+        /* HERCULES SPRITE */
         #hercules {
-            position: absolute;
-            bottom: 40px; left: 50px;
-            width: 40px; height: 60px;
+            position: absolute; bottom: 40px; left: 50px;
+            width: 45px; height: 75px;
             background: #ffcc99; /* Skin */
-            border-top: 15px solid #4a2c1d; /* Hair */
-            border-bottom: 20px solid #333; /* Skirt */
-            box-shadow: 5px 5px 0px rgba(0,0,0,0.2);
-            z-index: 5;
-        }
-        
-        /* Muscle arm detail */
-        #hercules::after {
-            content: '';
-            position: absolute;
-            right: -10px; top: 20px;
-            width: 15px; height: 10px;
-            background: #ffcc99;
-            border: 2px solid #000;
+            border-top: 18px solid #4a2c1d; /* Hair/Helmet */
+            border-bottom: 25px solid #8b4513; /* Tunic */
+            border-left: 4px solid #000; border-right: 4px solid #000;
+            z-index: 10;
         }
 
-        /* LION PIXEL ART */
+        /* LION SPRITE */
         #lion {
-            position: absolute;
-            bottom: 40px; right: 80px;
-            width: 90px; height: 70px;
-            background: #d4a017; /* Golden body */
-            border-left: 25px solid #804000; /* Mane */
-            border-radius: 10px;
+            position: absolute; bottom: 40px; right: 80px;
+            width: 130px; height: 90px;
+            background: #d4a017; /* Gold body */
+            border-left: 35px solid #804000; /* Giant Mane */
+            border-top: 10px solid #804000;
+            box-shadow: 5px 5px 0px #000;
         }
 
         #ground {
             position: absolute; bottom: 0; width: 100%; height: 40px;
-            background: #4d2600; border-top: 6px solid #228b22;
+            background: #5d2e0a; border-top: 5px solid #00ff00;
         }
 
-        /* HP BAR */
-        #hp-container {
+        #ui-hp {
             position: absolute; top: 20px; right: 20px;
-            width: 200px; height: 25px; border: 3px solid #fff;
+            width: 250px; height: 25px; border: 4px solid #fff;
             background: #222; display: none;
         }
-        #hp-fill { width: 100%; height: 100%; background: #ff0000; }
+        #hp-bar { width: 100%; height: 100%; background: #ff0000; }
 
-        .hidden { display: none !important; }
-        .punching { transform: translateX(20px) scaleX(1.1); background: #fff !important; }
+        .punch-anim { transform: scaleX(1.3) translateX(10px); background: #fff !important; }
+        .hide { display: none !important; }
     </style>
 </head>
 <body>
 
-    <div id="game-viewport">
-        <div id="overlay">
-            <div id="scroll-ui">
+    <div id="game-screen">
+        <div id="intro-layer">
+            <div id="scroll">
                 <p id="intro-text"></p>
-                <button id="start-btn" onclick="beginGame()">START</button>
+                <button id="start-button" onclick="launchGame()">START</button>
             </div>
         </div>
 
-        <div id="hp-container"><div id="hp-fill"></div></div>
+        <div id="ui-hp"><div id="hp-bar"></div></div>
         <div id="hercules"></div>
         <div id="lion"></div>
         <div id="ground"></div>
     </div>
 
     <script>
-        const msg = "Welcome champion, you have selected to complete twelve tasks. But be warned: these are tasks no mortal man could complete.";
-        const textEl = document.getElementById("intro-text");
-        const btn = document.getElementById("start-btn");
+        const story = "Welcome champion, you have selected to complete twelve tasks. But be warned: these are tasks no mortal man could complete.";
+        const textDisplay = document.getElementById("intro-text");
+        const startBtn = document.getElementById("start-button");
         const player = document.getElementById("hercules");
-        const boss = document.getElementById("lion");
-        const hpFill = document.getElementById("hp-fill");
+        const healthBar = document.getElementById("hp-bar");
 
-        let charIndex = 0;
-        let pX = 50;
-        let pY = 0;
-        let pVelY = 0;
-        let jumping = false;
+        let index = 0;
+        let hX = 50; let hY = 0; let vY = 0;
+        let isGrounded = true;
         let lionHP = 100;
-        let active = false;
+        let isPlaying = false;
 
-        // 1. TYPING ANIMATION
-        function type() {
-            if (charIndex < msg.length) {
-                textEl.innerHTML += msg.charAt(charIndex);
-                charIndex++;
-                setTimeout(type, 35);
+        // 1. TYPING EFFECT
+        function typeEffect() {
+            if (index < story.length) {
+                textDisplay.innerHTML += story.charAt(index);
+                index++;
+                setTimeout(typeEffect, 40);
             } else {
-                btn.style.display = "inline-block";
+                startBtn.style.display = "inline-block";
             }
         }
 
-        // 2. START TRIGGER
-        function beginGame() {
-            document.getElementById("overlay").classList.add("hidden");
-            document.getElementById("hp-container").style.display = "block";
-            active = true;
-            gameLoop();
+        // 2. LAUNCH
+        function launchGame() {
+            document.getElementById("intro-layer").classList.add("hide");
+            document.getElementById("ui-hp").style.display = "block";
+            isPlaying = true;
+            loop();
         }
 
         // 3. INPUTS
-        const input = {};
+        const keysPressed = {};
         window.addEventListener("keydown", e => {
-            input[e.code] = true;
-            if(e.code === "Space") doPunch();
-            if(e.code === "ArrowUp" && !jumping) {
-                jumping = true;
-                pVelY = 16;
+            keysPressed[e.code] = true;
+            if (e.code === "Space") attack();
+            if (e.code === "ArrowUp" && isGrounded) {
+                vY = 18;
+                isGrounded = false;
             }
         });
-        window.addEventListener("keyup", e => input[e.code] = false);
+        window.addEventListener("keyup", e => keysPressed[e.code] = false);
 
-        function doPunch() {
-            if(!active) return;
-            player.classList.add("punching");
+        function attack() {
+            if (!isPlaying) return;
+            player.classList.add("punch-anim");
             
-            // Logic for hitting the lion
-            let distance = Math.abs(pX - (800 - 170)); // Adjusted for lion position
-            if (distance < 100 && pY < 50) {
+            // Check Hitbox
+            let lionX = 800 - 80 - 130;
+            let dist = Math.abs(hX - lionX);
+            if (dist < 120 && hY < 60) {
                 lionHP -= 10;
-                hpFill.style.width = lionHP + "%";
-                if(lionHP <= 0) {
-                    active = false;
-                    alert("THE LION IS TAMED! TASK 1 COMPLETE!");
+                healthBar.style.width = lionHP + "%";
+                if (lionHP <= 0) {
+                    isPlaying = false;
+                    alert("THE NEMEAN LION DEFEATED! On to the Hydra!");
                     location.reload();
                 }
             }
-            setTimeout(() => player.classList.remove("punching"), 150);
+            setTimeout(() => player.classList.remove("punch-anim"), 150);
         }
 
-        // 4. ENGINE
-        function gameLoop() {
-            if(!active) return;
+        // 4. MAIN GAME LOOP
+        function loop() {
+            if (!isPlaying) return;
 
-            if (input["ArrowRight"]) pX += 6;
-            if (input["ArrowLeft"]) pX -= 6;
+            if (keysPressed["ArrowRight"]) hX += 7;
+            if (keysPressed["ArrowLeft"]) hX -= 7;
 
-            if (jumping) {
-                pY += pVelY;
-                pVelY -= 1; // Gravity
-                if (pY <= 0) {
-                    pY = 0;
-                    jumping = false;
+            // Gravity
+            if (!isGrounded) {
+                hY += vY;
+                vY -= 1.1; 
+                if (hY <= 0) {
+                    hY = 0;
+                    isGrounded = true;
+                    vY = 0;
                 }
             }
 
-            // Screen Borders
-            if(pX < 0) pX = 0;
-            if(pX > 750) pX = 750;
+            // Constraints
+            if (hX < 0) hX = 0;
+            if (hX > 750) hX = 750;
 
-            player.style.left = pX + "px";
-            player.style.bottom = (40 + pY) + "px";
+            player.style.left = hX + "px";
+            player.style.bottom = (40 + hY) + "px";
 
-            requestAnimationFrame(gameLoop);
+            requestAnimationFrame(loop);
         }
 
-        window.onload = type;
+        window.onload = typeEffect;
     </script>
 </body>
 </html>
