@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hercules: 12 Tasks</title>
+    <title>Hercules: The Twelve Tasks</title>
     <style>
-        /* CSS stays inside the HTML file now */
+        /* CSS - Styling the game */
         body {
             background-color: #000;
             margin: 0;
@@ -13,80 +13,105 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
             overflow: hidden;
         }
 
-        #game-window {
+        #game-container {
+            position: relative;
             width: 600px;
             height: 400px;
-            background-color: #000088; /* Classic Retro Blue */
-            border: 10px solid #fff;
+            background-color: #000088; /* Retro Blue */
+            border: 8px solid #fff;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            position: relative;
+            background-image: url('https://i.imgur.com/your-image-here.png'); /* We can link your Hercules image here */
+            background-repeat: no-repeat;
+            background-position: center bottom;
         }
 
         #scroll {
             background-color: #f4d0a4;
-            width: 70%;
+            width: 80%;
             padding: 20px;
             border: 5px solid #8b4513;
             text-align: center;
             box-shadow: 10px 10px 0px #000;
-            font-family: 'Courier New', Courier, monospace;
+            z-index: 10;
         }
 
         #intro-text {
             color: #331a00;
             font-size: 18px;
             font-weight: bold;
-            line-height: 1.5;
+            line-height: 1.4;
+            margin-bottom: 20px;
         }
 
         #start-btn {
             background-color: #e60000;
             color: white;
-            border: 3px solid #000;
+            border: 4px solid #000;
             padding: 10px 20px;
             font-size: 20px;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
             cursor: pointer;
-            margin-top: 15px;
-            display: none; /* Hidden at start */
+            visibility: hidden; /* Hidden until text finishes */
+            transition: transform 0.1s;
+        }
+
+        #start-btn:active {
+            transform: scale(0.9);
+        }
+
+        /* Adding a simple "8-bit" blink effect for the button */
+        .blink {
+            animation: blinker 1s linear infinite;
+        }
+
+        @keyframes blinker {
+            50% { opacity: 0.5; }
         }
     </style>
 </head>
 <body>
 
-    <div id="game-window">
+    <div id="game-container">
         <div id="scroll">
             <p id="intro-text"></p>
-            <button id="start-btn" onclick="startGame()">START</button>
+            <button id="start-btn" onclick="nextStep()">START</button>
         </div>
     </div>
 
     <script>
-        // JavaScript also stays inside the HTML file
-        const introText = "Welcome champion, you have selected to complete twelve tasks. But be warned: these are tasks no mortal man could complete.";
+        // JavaScript - Game Logic
+        const introString = "Welcome champion, you have selected to complete twelve tasks. But be warned: these are tasks no mortal man could complete.";
         const textElement = document.getElementById("intro-text");
         const startBtn = document.getElementById("start-btn");
         let i = 0;
 
         function typeWriter() {
-            if (i < introText.length) {
-                textElement.innerHTML += introText.charAt(i);
+            if (i < introString.length) {
+                textElement.innerHTML += introString.charAt(i);
                 i++;
-                setTimeout(typeWriter, 40);
+                setTimeout(typeWriter, 50); // Speed of typing
             } else {
-                startBtn.style.display = "inline-block";
+                // Show button after typing is done
+                startBtn.style.visibility = "visible";
+                startBtn.classList.add("blink");
             }
         }
 
-        function startGame() {
-            alert("The Hydra is approaching! Prepare for Task 1!");
+        function nextStep() {
+            alert("Prepare yourself! Your first task is the Nemean Lion!");
+            // In the next step, we will replace this alert with the actual level
         }
 
-        // Start the typing as soon as the page loads
+        // Start the intro when the page finishes loading
         window.onload = typeWriter;
     </script>
 </body>
